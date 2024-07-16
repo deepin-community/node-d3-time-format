@@ -110,6 +110,22 @@ tape("timeFormat(\"%e\")(date) formats space-padded dates", function(test) {
   test.end();
 });
 
+tape("timeFormat(\"%g\")(date) formats zero-padded two-digit ISO 8601 years", function (test) {
+  var f = timeFormat.timeFormat("%g");
+  test.equal(f(date.local(2018, 11, 30, 0)), "18"); // Sunday
+  test.equal(f(date.local(2018, 11, 31, 0)), "19"); // Monday
+  test.equal(f(date.local(2019, 0, 1, 0)), "19");
+  test.end();
+});
+
+tape("timeFormat(\"%G\")(date) formats zero-padded four-digit ISO 8601 years", function (test) {
+  var f = timeFormat.timeFormat("%G");
+  test.equal(f(date.local(2018, 11, 30, 0)), "2018"); // Sunday
+  test.equal(f(date.local(2018, 11, 31, 0)), "2019"); // Monday
+  test.equal(f(date.local(2019, 0, 1, 0)), "2019");
+  test.end();
+});
+
 tape("timeFormat(\"%H\")(date) formats zero-padded hours (24)", function(test) {
   var f = timeFormat.timeFormat("%H");
   test.equal(f(date.local(1990, 0, 1,  0)), "00");
@@ -155,6 +171,15 @@ tape("timeFormat(\"%p\")(date) formats AM or PM", function(test) {
   var f = timeFormat.timeFormat("%p");
   test.equal(f(date.local(1990, 0, 1,  0)), "AM");
   test.equal(f(date.local(1990, 0, 1, 13)), "PM");
+  test.end();
+});
+
+tape("timeFormat(\"%q\")(date) formats quarters", function(test) {
+  var f = timeFormat.timeFormat("%q");
+  test.equal(f(date.local(1990, 0, 1)), "1");
+  test.equal(f(date.local(1990, 3, 1)), "2");
+  test.equal(f(date.local(1990, 6, 1)), "3");
+  test.equal(f(date.local(1990, 9, 1)), "4");
   test.end();
 });
 
@@ -215,6 +240,16 @@ tape("timeFormat(\"%U\")(date) formats zero-padded week numbers", function(test)
   test.equal(f(date.local(2010,  2, 15,  0)), "11");
   test.equal(f(date.local(2010, 10,  6, 23)), "44");
   test.equal(f(date.local(2010, 10,  7,  0)), "45"); // DST ends
+  test.equal(f(date.local(2010, 10,  8,  0)), "45");
+  test.equal(f(date.local(2012,  0,  1,  0)), "01"); // Sunday!
+  test.end();
+});
+
+tape("timeFormat(\"%W\")(date) formats zero-padded week numbers", function(test) {
+  var f = timeFormat.timeFormat("%W");
+  test.equal(f(date.local(1990,  0,  1,  0)), "01"); // Monday!
+  test.equal(f(date.local(1990,  5,  1,  0)), "22");
+  test.equal(f(date.local(2010,  2, 15,  0)), "11");
   test.equal(f(date.local(2010, 10,  8,  0)), "45");
   test.end();
 });

@@ -98,6 +98,22 @@ tape("utcFormat(\"%e\")(date) formats space-padded dates", function(test) {
   test.end();
 });
 
+tape("timeFormat(\"%g\")(date) formats zero-padded two-digit ISO 8601 years", function (test) {
+  var f = timeFormat.utcFormat("%g");
+  test.equal(f(date.utc(2018, 11, 30, 0)), "18"); // Sunday
+  test.equal(f(date.utc(2018, 11, 31, 0)), "19"); // Monday
+  test.equal(f(date.utc(2019, 0, 1, 0)), "19");
+  test.end();
+});
+
+tape("utcFormat(\"%G\")(date) formats zero-padded four-digit ISO 8601 years", function (test) {
+  var f = timeFormat.utcFormat("%G");
+  test.equal(f(date.utc(2018, 11, 30, 0)), "2018"); // Sunday
+  test.equal(f(date.utc(2018, 11, 31, 0)), "2019"); // Monday
+  test.equal(f(date.utc(2019, 0, 1, 0)), "2019");
+  test.end();
+});
+
 tape("utcFormat(\"%H\")(date) formats zero-padded hours (24)", function(test) {
   var f = timeFormat.utcFormat("%H");
   test.equal(f(date.utc(1990, 0, 1,  0)), "00");
@@ -146,6 +162,15 @@ tape("utcFormat(\"%p\")(date) formats AM or PM", function(test) {
   test.end();
 });
 
+tape("utcFormat(\"%q\")(date) formats quarters", function(test) {
+  var f = timeFormat.utcFormat("%q");
+  test.equal(f(date.utc(1990, 0, 1)), "1");
+  test.equal(f(date.utc(1990, 3, 1)), "2");
+  test.equal(f(date.utc(1990, 6, 1)), "3");
+  test.equal(f(date.utc(1990, 9, 1)), "4");
+  test.end();
+});
+
 tape("utcFormat(\"%Q\")(date) formats UNIX timestamps", function(test) {
   var f = timeFormat.utcFormat("%Q");
   test.equal(f(date.utc(1970, 0, 1,  0,  0,  0)), "0");
@@ -159,6 +184,20 @@ tape("utcFormat(\"%s\")(date) formats UNIX timetamps in seconds", function(test)
   test.equal(f(date.utc(1970, 0, 1,  0,  0,  0)), "0");
   test.equal(f(date.utc(1990, 0, 1,  0,  0,  0)), "631152000");
   test.equal(f(date.utc(1990, 0, 1, 12, 34, 56)), "631197296");
+  test.end();
+});
+
+tape("utcFormat(\"%s.%L\")(date) formats UNIX timetamps in seconds and milliseconds", function(test) {
+  var f = timeFormat.utcFormat("%s.%L");
+  test.equal(f(date.utc(1990, 0, 1,  0,  0,  0, 123)), "631152000.123");
+  test.equal(f(date.utc(1990, 0, 1, 12, 34, 56, 789)), "631197296.789");
+  test.end();
+});
+
+tape("utcFormat(\"%s.%f\")(date) formats UNIX timetamps in seconds and microseconds", function(test) {
+  var f = timeFormat.utcFormat("%s.%f");
+  test.equal(f(date.utc(1990, 0, 1,  0,  0,  0, 123)), "631152000.123000");
+  test.equal(f(date.utc(1990, 0, 1, 12, 34, 56, 789)), "631197296.789000");
   test.end();
 });
 
@@ -219,6 +258,16 @@ tape("utcFormat(\"%U\")(date) formats zero-padded week numbers", function(test) 
   test.equal(f(date.utc(2010,  2, 15,  0)), "11");
   test.equal(f(date.utc(2010, 10,  6, 23)), "44");
   test.equal(f(date.utc(2010, 10,  7,  0)), "45"); // DST ends
+  test.equal(f(date.utc(2010, 10,  8,  0)), "45");
+  test.equal(f(date.utc(2012,  0,  1,  0)), "01"); // Sunday!
+  test.end();
+});
+
+tape("utcFormat(\"%W\")(date) formats zero-padded week numbers", function(test) {
+  var f = timeFormat.utcFormat("%W");
+  test.equal(f(date.utc(1990,  0,  1,  0)), "01"); // Monday!
+  test.equal(f(date.utc(1990,  5,  1,  0)), "22");
+  test.equal(f(date.utc(2010,  2, 15,  0)), "11");
   test.equal(f(date.utc(2010, 10,  8,  0)), "45");
   test.end();
 });
