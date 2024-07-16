@@ -15,6 +15,12 @@ tape("parse(string) coerces the specified string to a string", function(test) {
   test.end();
 });
 
+tape("timeParse(specifier) coerces the specified specifier to a string", function(test) {
+  var p = timeFormat.timeParse({toString: function() { return "%c"; }});
+  test.deepEqual(p("1/1/1990, 12:00:00 AM"), date.local(1990, 0, 1));
+  test.end();
+});
+
 tape("timeParse(\"%a %m/%d/%Y\")(date) parses abbreviated weekday and date", function(test) {
   var p = timeFormat.timeParse("%a %m/%d/%Y");
   test.deepEqual(p("Sun 01/01/1990"), date.local(1990, 0, 1));
@@ -66,13 +72,39 @@ tape("timeParse(\"%w %U %Y\")(date) parses numeric weekday (Sunday), week number
   test.end();
 });
 
-tape("timeParse(\"%w %V %Y\")(date) parses numeric weekday, week number (ISO) and year", function(test) {
-  var p = timeFormat.timeParse("%w %V %Y");
+tape("timeParse(\"%w %V %G\")(date) parses numeric weekday, week number (ISO) and corresponding year", function(test) {
+  var p = timeFormat.timeParse("%w %V %G");
   test.deepEqual(p("1 01 1990"), date.local(1990,  0,  1));
   test.deepEqual(p("0 05 1991"), date.local(1991,  1,  3));
   test.deepEqual(p("4 53 1992"), date.local(1992, 11, 31));
   test.deepEqual(p("0 52 1994"), date.local(1995,  0,  1));
   test.deepEqual(p("0 01 1995"), date.local(1995,  0,  8));
+  test.deepEqual(p("1 01 2018"), date.local(2018,  0,  1));
+  test.deepEqual(p("1 01 2019"), date.local(2018,  11,  31));
+  test.end();
+});
+
+tape("timeParse(\"%w %V %g\")(date) parses numeric weekday, week number (ISO) and corresponding two-digits year", function(test) {
+  var p = timeFormat.timeParse("%w %V %g");
+  test.deepEqual(p("1 01 90"), date.local(1990,  0,  1));
+  test.deepEqual(p("0 05 91"), date.local(1991,  1,  3));
+  test.deepEqual(p("4 53 92"), date.local(1992, 11, 31));
+  test.deepEqual(p("0 52 94"), date.local(1995,  0,  1));
+  test.deepEqual(p("0 01 95"), date.local(1995,  0,  8));
+  test.deepEqual(p("1 01 18"), date.local(2018,  0,  1));
+  test.deepEqual(p("1 01 19"), date.local(2018, 11, 31));
+  test.end();
+});
+
+tape("timeParse(\"%V %g\")(date) parses week number (ISO) and corresponding two-digits year", function(test) {
+  var p = timeFormat.timeParse("%V %g");
+  test.deepEqual(p("01 90"), date.local(1990,  0,  1));
+  test.deepEqual(p("05 91"), date.local(1991,  0, 28));
+  test.deepEqual(p("53 92"), date.local(1992, 11, 28));
+  test.deepEqual(p("52 94"), date.local(1994, 11, 26));
+  test.deepEqual(p("01 95"), date.local(1995,  0,  2));
+  test.deepEqual(p("01 18"), date.local(2018,  0,  1));
+  test.deepEqual(p("01 19"), date.local(2018, 11, 31));
   test.end();
 });
 
@@ -228,6 +260,24 @@ tape("timeParse(\"%I %p\")(date) parses period in non-English locales", function
   test.deepEqual(p("12:00:00 p.m."), date.local(1900, 0, 1, 12, 0, 0));
   test.deepEqual(p("12:00:01 p.m."), date.local(1900, 0, 1, 12, 0, 1));
   test.deepEqual(p("11:59:59 P.M."), date.local(1900, 0, 1, 23, 59, 59));
+  test.end();
+});
+
+tape("timeParse(\"%Y %q\")(date) parses quarters", function(test) {
+  var p = timeFormat.timeParse("%Y %q");
+  test.deepEqual(p("1990 1"), date.local(1990, 0, 1));
+  test.deepEqual(p("1990 2"), date.local(1990, 3, 1));
+  test.deepEqual(p("1990 3"), date.local(1990, 6, 1));
+  test.deepEqual(p("1990 4"), date.local(1990, 9, 1));
+  test.end();
+});
+
+tape("timeParse(\"%Y %q %m\")(date) gives the month number priority", function(test) {
+  var p = timeFormat.timeParse("%Y %q %m");
+  test.deepEqual(p("1990 1 2"), date.local(1990, 1, 1));
+  test.deepEqual(p("1990 2 5"), date.local(1990, 4, 1));
+  test.deepEqual(p("1990 3 8"), date.local(1990, 7, 1));
+  test.deepEqual(p("1990 4 9"), date.local(1990, 8, 1));
   test.end();
 });
 

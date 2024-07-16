@@ -2,4 +2,7 @@ version=4
 opts=\
 dversionmangle=auto,\
 filenamemangle=s/.*?(\d[\d\.-]*@ARCHIVE_EXT@)/node-d3-time-format-$1/ \
- https://github.com/d3/d3-time-format/tags .*/archive/.*/v?([\d\.]+).tar.gz
+ https://github.com/d3/d3-time-format/tags .*/archive/.*/v?([\d\.]+).tar.gz group
+
+opts="searchmode=plain,component=types-d3-time-format,ctype=nodejs,pgpmode=none,filenamemangle=s/^.*?(\d[\d\.-]*@ARCHIVE_EXT@)/node-types-d3-time-format-$1/" \
+ https://registry.npmjs.org/@types/d3-time-format https://registry.npmjs.org/@types/d3-time-format/-/d3-time-format-([\d\.]+)@ARCHIVE_EXT@ group
